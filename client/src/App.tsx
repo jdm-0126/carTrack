@@ -8,7 +8,7 @@ import { genericSearch } from "./utils/genericSearch";
 import { genericFilter } from "./utils/genericFilter";
 // import { Filters } from "./components/Filters";
 // import {FilterFields} from "./components/FilterFields"
-import { Container, Row, Col, CardColumns } from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
 
 function App() {
   const [query, setQuery] = useState<string>("");
@@ -97,7 +97,7 @@ const handleTbody = (e) => {
 }
 
 function GoTo(id,nu){
-  var obj=document.getElementById(id),
+  let obj=document.getElementById(id),
       trs=obj.getElementsByTagName('TR');
   nu = nu + 1;
   if (trs[nu]){
@@ -110,13 +110,14 @@ function GoTo(id,nu){
 }
 
 function rowindex(row){
-	var rows = table.rows, i = rows.length;
+	let rows = table.rows, i = rows.length;
 	while(--i > -1){
 		if(rows[i] === row){return i;}
 	}
 }
-document.onkeydown = function(e){
-	var code = e.keyCode, rowslim = table.rows.length - 2, newhigh;
+document.onkeydown = (e) => {
+  e = e || Event;
+	let code = e.keyCode, rowslim = table.rows.length - 2, newhigh;
 	if(code === 38){ //up arraow
 		newhigh = rowindex(ishigh) - 2;
 		if(!ishigh || newhigh < 0){return GoTo('mstrTable', rowslim);}
@@ -127,49 +128,50 @@ document.onkeydown = function(e){
 		return GoTo('mstrTable', newhigh);
 	}
 }
-var table = document.getElementById("mstrTable");
+var table = document.getElementById("mstrTable") as HTMLTableElement;
   return (
     <div className="App">
      
       {resultdata.length > 0 && (
         <Container>
           <Row md={4}>
-            <Col style={{marginTop:"5em", marginBottom:"2em"}}>
+            <Col style={{marginTop:"5em", marginBottom:"1em"}}>
               <SearchInput onChangeSearchQuery={(query) => setQuery(query)} />
               {/* <FilterFields /> */}
             </Col>
+            
+          </Row>
+          <Row style={{margin:"5em"}}>
             <Col >
-              <table id="mstrTable">
-              <thead onClick={e => handleTHead(e)}>
-                <tr>
-                  {columns.map((column) => (
-                    column.options ? <th>{column.label}</th> :  ''
-                  )
-                  )}
-                </tr>
-                </thead>
-                <tbody onClick={e => handleTbody(e)}>
-                  {resultdata.map((widget) => {
-                    const emailtTo = widget.email;
-                    const phone = widget.phone;
-                    return (
-                    <tr>
-                      <td>{widget.id}</td>
-                      <td>{widget.name}</td>
-                      <td><a style={{textDecoration:"none"}} href={`mailto:${emailtTo}`}>{widget.email}</a></td>
-                      <td><a style={{textDecoration:"none"}} href={`tel:${phone}`}>{widget.phone}</a></td>
-                      <td>{widget.website}</td>
-                      <td>{widget.company.name}</td>
-                    </tr>
+                <table id="mstrTable">
+                <thead onClick={e => handleTHead(e)}>
+                  <tr>
+                    {columns.map((column) => (
+                      column.options ? <th>{column.label}</th> :  ''
                     )
-                    })}
-                  </tbody>
-                <div>
-                </div>
-              </table>
-
-          
-            </Col>
+                    )}
+                  </tr>
+                  </thead>
+                  <tbody onClick={e => handleTbody(e)}>
+                    {resultdata.map((widget) => {
+                      const emailtTo = widget.email;
+                      const phone = widget.phone;
+                      return (
+                      <tr>
+                        <td>{widget.id}</td>
+                        <td>{widget.name}</td>
+                        <td><a style={{textDecoration:"none"}} href={`mailto:${emailtTo}`}>{widget.email}</a></td>
+                        <td><a style={{textDecoration:"none"}} href={`tel:${phone}`}>{widget.phone}</a></td>
+                        <td>{widget.website}</td>
+                        <td>{widget.company.name}</td>
+                      </tr>
+                      )
+                      })}
+                    </tbody>
+                  <div>
+                  </div>
+                </table>
+              </Col>
           </Row>
         </Container>
       )}

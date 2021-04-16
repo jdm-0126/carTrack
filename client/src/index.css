@@ -29,10 +29,10 @@ code {
     }
 
     #mstrTable {
-      border: 1px solid black
+      border: 0.5px outlined #ffeaea
  }
  #mstrTable td, th {
-      border: 1px solid black
+      border: 0.5px outlined #ffeaea
  }
  
  #mstrTable tr.normal td {
