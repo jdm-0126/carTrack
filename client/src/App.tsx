@@ -6,14 +6,15 @@ import IWidget from "./interfaces/IWidget"
 import IFilter from "./interfaces/IFilter";
 import { genericSearch } from "./utils/genericSearch";
 import { genericFilter } from "./utils/genericFilter";
-// import { Filters } from "./components/Filters";
-// import {FilterFields} from "./components/FilterFields"
 import { Container, Row, Col } from 'reactstrap';
 
 function App() {
   const [query, setQuery] = useState<string>("");
   const [data, setData] = useState([]);
+  const [showId, setShowId] = useState(true);
   const [show, setShow] = useState(true);
+  const [showWebsite, setShowWebsite] = useState(true);
+  const [showCompany, setShowCompany] = useState(true);
   const [activeFilters, setActiveFilters] = useState<Array<IFilter<IWidget>>>(
     []
   );
@@ -26,8 +27,6 @@ function App() {
             response.status);
           return;
         }
-
-        // Examine the text in the response
         response.json().then((lam) => {
           setData(lam);
         });
@@ -42,14 +41,14 @@ function App() {
   }, [])
   const resultdata = data
     .filter((res) =>
-      genericSearch<IWidget>(res, ["name", "email"], query)
+      genericSearch<IWidget>(res, ["name", "email", "website", "company"], query)
     )
     .filter((res) => genericFilter<IWidget>(res, activeFilters))
 const columns = [
   {
     name: "id",
     label: "ID",
-    options: show,
+    options: showId,
   },
   {
     name: "name",
@@ -69,12 +68,12 @@ const columns = [
   {
     name: "website",
     label: "Website",
-    options: show
+    options: showWebsite
   },
   {
     name: "company",
     label: "Company",
-    options: show
+    options: showCompany
   },
 
 ]
@@ -83,6 +82,33 @@ let ishigh;
 const handleTHead = (e) => {
   e = e || window.event;
   // var th = e.target || e.srcElement;
+}
+const handleFilter = () => {
+  columns.map(dat => {
+      if (dat.name === "website") {
+        setShowWebsite(!showWebsite);
+      }
+      return columns;
+    } 
+  )
+}
+const handleFilterCompany = () => {
+  columns.map(dat => {
+      if (dat.name === "company") {
+        setShowCompany(!showCompany);
+      }
+      return columns;
+    } 
+  )
+}
+const handleFilterID = () => {
+  columns.map(dat => {
+      if (dat.name === "id") {
+        setShowId(!showId);
+      }
+      return columns;
+    } 
+  )
 }
 
 const handleTbody = (e) => {
@@ -97,7 +123,7 @@ const handleTbody = (e) => {
 }
 
 function GoTo(id,nu){
-  let obj=document.getElementById(id),
+  var obj=document.getElementById(id),
       trs=obj.getElementsByTagName('TR');
   nu = nu + 1;
   if (trs[nu]){
@@ -110,14 +136,14 @@ function GoTo(id,nu){
 }
 
 function rowindex(row){
-	let rows = table.rows, i = rows.length;
+	var rows = table.rows, i = rows.length;
 	while(--i > -1){
 		if(rows[i] === row){return i;}
 	}
 }
 document.onkeydown = (e) => {
-  e = e || Event;
-	let code = e.keyCode, rowslim = table.rows.length - 2, newhigh;
+  e = e ;
+	var code = e.keyCode, rowslim = table.rows.length, newhigh;
 	if(code === 38){ //up arraow
 		newhigh = rowindex(ishigh) - 2;
 		if(!ishigh || newhigh < 0){return GoTo('mstrTable', rowslim);}
@@ -137,7 +163,6 @@ var table = document.getElementById("mstrTable") as HTMLTableElement;
           <Row md={4}>
             <Col style={{marginTop:"5em", marginBottom:"1em"}}>
               <SearchInput onChangeSearchQuery={(query) => setQuery(query)} />
-              {/* <FilterFields /> */}
             </Col>
             
           </Row>
@@ -156,23 +181,31 @@ var table = document.getElementById("mstrTable") as HTMLTableElement;
                     {resultdata.map((widget) => {
                       const emailtTo = widget.email;
                       const phone = widget.phone;
+                      const website = widget.website;
+                      const company = widget.company;
                       return (
-                      <tr>
-                        <td>{widget.id}</td>
+                      <tr key={widget.id}>
+                        {showId ? <td>{widget.id} </td>: ''}
                         <td>{widget.name}</td>
-                        <td><a style={{textDecoration:"none"}} href={`mailto:${emailtTo}`}>{widget.email}</a></td>
-                        <td><a style={{textDecoration:"none"}} href={`tel:${phone}`}>{widget.phone}</a></td>
-                        <td>{widget.website}</td>
-                        <td>{widget.company.name}</td>
+                        <td><a style={{textDecoration:"none"}} href={`mailto:${emailtTo}`}>{emailtTo}</a></td>
+                        <td><a style={{textDecoration:"none"}} href={`tel:${phone}`}>{phone}</a></td>
+                        {showWebsite ? <td>{website} </td>: ''}
+                        {showCompany ? <td>{company.name}</td> : ''}
                       </tr>
                       )
                       })}
                     </tbody>
                   <div>
                   </div>
+                  <div style={{margin:"2em"}}>
+                  Filter by: <button style={{marginRight:"2px"}} onClick={() => handleFilterID()}>ID</button>
+                  <button style={{marginRight:"2px"}} onClick={() => handleFilter()}>Website</button>
+                  <button onClick={() => handleFilterCompany()}>Company</button>
+                  </div>
                 </table>
               </Col>
           </Row>
+          
         </Container>
       )}
         {resultdata.length === 0 && <p>No results found!</p>}
