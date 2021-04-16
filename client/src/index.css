@@ -11,3 +11,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+  	.hoverTable{
+		width:100%; 
+		border-collapse:collapse; 
+	}
+	.hoverTable td{ 
+		padding:7px; border:#e2e8f0 1px solid;
+	}
+	/* Define the default color for all the table rows */
+	.hoverTable tr{
+		background: #dadadb;
+	}
+	/* Define the hover highlight color for the table row */
+    .hoverTable tr:hover {
+          background-color: #e6c6c6;
+    }
+
+    #mstrTable {
+      border: 1px solid black
+ }
+ #mstrTable td, th {
+      border: 1px solid black
+ }
+ 
+ #mstrTable tr.normal td {
+     color: black;
+     background-color: white;
+ }
+ #mstrTable tr.highlighted td {
+     color: white;
+     background-color: rgb(126, 126, 126);
+ }
